@@ -1,0 +1,46 @@
+# include <cstdio>
+# include <cstring>
+# include <algorithm>
+# include <iostream>
+using namespace std;
+
+typedef pair<int,int> P;
+const int inf=0x3f3f3f3f,nn=200000+5,p=1e9+7;
+int k[nn],r[nn],l[nn];
+
+int gcd(int a,int b){
+	if(b==0) return a;
+	return gcd(b,a%b);
+}
+
+void exgcd(int a,int b,int &x,int &y,int &d){
+	if(b==0){d=a,x=1,y=0;}
+	else {
+		exgcd(b,a%b,y,x,d);
+		y-=x*(a/b);
+	}
+}
+
+int inv(int a,int pp=p){
+	int x,y,d;
+	exgcd(a,pp,x,y,d);
+	return d==1?(x%pp+pp)%pp:-1;
+}
+
+//求解A[i]*x=B[i](modM[i]),
+P linear(int A[],int B[],int M[],int n){
+	int x=0,m=1;
+	for(int i=0;i<n;i++){
+		int a=A[i]*m,b=B[i]-A[i]*x,d=gcd(M[i],a);
+		if(b%d!=0) return P(0,-1);
+		int t=b/d*inv(a/d,M[i]/d)%(M[i]/d);
+		x=x+m*t;
+		m*=M[i]/d;
+	}
+	x=(x%m+m)%m;
+	return P(x,m);
+}
+
+int main(){
+	;
+}
