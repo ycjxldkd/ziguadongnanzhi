@@ -1,0 +1,123 @@
+# include <cstdio>
+# include <cstring>
+# include <algorithm>
+
+typedef struct bint{
+	int a[2000+3],len;
+}bint;
+
+int comp(bint &a,bint &b){
+	if(a.len!=b.len) return (a.len>b.len)?1:-1;
+	for(int i=a.len-1;i>=0;i--)
+		if(a.a[i]!=b.a[i]) return (a.a[i]>b.a[i])?1:-1;
+	return 0;
+}
+
+bint add(bint &a,bint &b){
+	bint c;
+	int len=std::max(a.len,b.len);
+	memset(c.a,0,sizeof(c.a));
+	for(int i=0;i<len;i++){
+		c.a[i]+=(a.a[i]+b.a[i]);
+		if(c.a[i]>9){
+			c.a[i+1]+=1;
+			c.a[i]-=10;
+		}
+	}
+	if(c.a[c.len]) len+=1;
+	c.len=len;
+	return c;
+}
+//保证a>b
+bint dev(bint &a,bint &b){
+	bint c;
+	int len=std::max(a.len,b.len);
+	memset(c.a,0,sizeof(c.a));
+	for(int i=0;i<len;i++){
+		c.a[i]+=(a.a[i]-b.a[i]);
+		if(c.a[i]<0){
+			c.a[i]+=10;
+			c.a[i+1]-=1;
+		}
+	}
+	while(c.a[len]==0&&len>1) len-=1;
+	c.len=len;
+	return c;
+}
+
+bint mul(bint &a,int k){
+	bint c;
+	int len=a.len;
+	memset(a.a,0,sizeof(a.a));
+	if(k==0){
+		c.len=1;
+		return c;
+	}
+	for(int i=0;i<len;i++){
+		c.a[i]+=(a.a[i]*k);
+		if(c.a[i]>9){
+			c.a[i+1]=c.a[i]/10;
+			c.a[i]%=10;
+		}
+	}
+	while(c.a[len]>0){
+		c.a[len+1]=c.a[len]/10;
+		c.a[len++]%=10;
+	}
+	c.len=len;
+	return c;
+}
+
+bint muli(bint &a,bint &b){
+	int len=0;
+	bint c;
+	memset(c.a,0,sizeof(c.a));
+	for(int i=0;i<a.len;i++){
+		for(int j=0;j<b.len;j++){
+			c.a[i+j]+=(a.a[i]*b.a[j]);
+			if(c.a[i+j]>9){
+				c.a[i+j+1]+=c.a[i+j]/10;
+				c.a[i+j]%=10;
+			}
+		}
+	}
+	len=a.len+b.len-1;
+	while(c.a[len-1]==0&&len>1) len-=1;
+	if(c.a[len]) len+=1;
+	c.len=len;
+	return c;
+}
+//  a/b  商为 c 余数为 f
+void dev(bint &a,int &b,bint &c,int &f){
+	int len=a.len;
+	memset(c.a,0,sizeof(c.a));
+	f=0;
+	for(int i=a.len-1;i>=0;i--){
+		f=f*10+a.a[i];
+		c.a[i]=f/b;
+		f%=b;
+	}
+	while(len>1&&c.a[len-1]==0) len-=1;
+	c.len=len;
+}
+
+void devi(bint &a,bint &b,bint &c,bint &f){
+	int len=a.len;
+	memset(c.a,0,sizeof(c.a));
+	memset(f.a,0,sizeof(f.a));
+	f.len=1;
+	for(int i=len-1;i>=0;i--){
+		mul(f,10);
+		f.a[0]=a.a[i];
+		while(comp(f,b)>0){
+			f=add(f,b);
+			c.a[i]+=1;
+		}
+	}
+	while(len>1&&c.a[len-1]==0) len-=1;
+	c.len=len;
+}
+
+int main(){
+	return 0;
+}
