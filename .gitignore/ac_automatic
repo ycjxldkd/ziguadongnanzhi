@@ -1,0 +1,74 @@
+# include <queue>
+# include <cstdio>
+# include <cstring>
+# include <iostream>
+# include <algorithm>
+using namespace std;
+
+const int INF=0x3f3f3f3f;
+int n,m;
+int sz,f[20000+5],ch[200000+5][26],val[200000+5],las[200000+5];
+
+void init(){
+	sz=0;
+	memset(ch[sz],-1,sizeof(ch[sz]));
+}
+
+void createtrie(char *s){
+	int len=strlen(s);
+	int p=0;
+	for(int i=0;i<len;i++){
+		int id=s[i]-'a';
+		if(ch[p][id]==-1){
+			ch[p][id]=++sz;
+			memset(ch[sz],-1,sizeof(ch[sz]));
+			val[sz]=1;
+			p=ch[p][id];
+		}
+		else {
+			val[ch[p][id]]+1;
+			p=ch[p][id];
+		}
+	}
+	las[p]+=1;
+}
+
+void getfail(){
+	queue<int> Q;
+	f[0]=0;
+	for(int i=0;i<26;i++) 
+		if(ch[0][i]!=-1) Q.push(ch[0][i]),f[ch[0][i]]=0;
+		else ch[0][i]=0;
+	while(Q.size()){
+		int x=Q.front();Q.pop();
+		for(int i=0;i<26;i++){
+			if(ch[x][i]==-1) 
+				ch[x][i]=ch[f[x]][i];
+			else {
+				f[ch[x][i]]=ch[f[x]][i];
+				Q.push(ch[x][i]);
+			}
+		}
+	}
+}
+
+void find(char *s,int &cnt){
+	int len=strlen(s);
+	int p=0;
+	for(int i=0;i<len;i++){
+		int id=s[i]-'a';
+		p=ch[p][id];
+		int tmp=p;
+		while(tmp!=0){
+			cnt+=las[tmp];
+			las[tmp]=0;
+			tmp=f[tmp];
+		}
+	}
+}
+
+
+
+int main(){
+	;
+}
