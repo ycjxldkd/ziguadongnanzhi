@@ -1,0 +1,60 @@
+# include <cstdio>
+# include <algorithm>
+# include <cstring>
+
+const int INF=0x3f3f3f3f;
+int lve[102][102],exg[102],exb[102],mat[102];//妹砸和鹅砸的暧昧程度，妹砸和鹅砸的期望，鹅砸匹配到的妹砸
+int visg[102],visb[102],slj[102];
+int bn,gn;//妹砸和鹅砸个数
+
+bool dfs(int gi){
+	visg[gi]=1;
+	for(int i=0;i<bn;i++){//每一轮匹配每个鹅砸只尝试一次
+		if(visb[bn]) continue;
+		int gap=exg[gi]+exb[i]-lve[gi][i];
+		if(gap==0) {//如果符合要求
+			visb[i]=1;
+			if(mat[i]==-1||dfs(mat[i])){//找到一个没有匹配的鹅砸或者该鹅砸的妹子可以找到其他人【备胎
+				mat[i]=gi;
+				return true;
+			}
+		}
+		else //slj该鹅砸要得到妹砸的倾心还要多少暧昧
+			slj[i]=std::min(slj[i],gap);
+	}
+	return false;
+}
+
+int KM(){
+	memset(mat,-1,sizeof(mat));//每个鹅砸匹配的妹砸
+	memset(exb,0,sizeof(exb));//出事每个鹅砸的期望为0
+	for(int i=0;i<gn;i++){
+		exg[i]=lve[i][0];//妹砸想要最暧昧的那个
+		for(int j=1;j<bn;j++)
+			exg[i]=std::max(exg[i],lve[i][j]);
+	}
+	for(int i=0;i<gn;i++){//为每一个妹砸找男友
+		std::fill(slj,slj+bn,INF);
+		while(1){
+			memset(visg,0,sizeof(visg));//如果找不到就降低期望
+			memset(visb,0,sizeof(visb));
+			if(dfs(i)) break;
+			int d=INF;//最少可降低的期望值
+			for(int j=0;j<bn;j++)
+				if(!visb[j]) d=std::min(d,slj[j]);
+			for(int j=0;j<gn;j++)//所有访问的妹砸降低期望
+				if(visg[j]) exg[j]-=d;
+			for(int j=0;j<bn;j++)
+				if(visb[j]) exb[j]+=d;
+				else slj[j]-=d;
+		}
+	}
+	int ans=0;//匹配完成，完结撒花
+	for(int i=0;i<bn;i++)
+		ans+=lve[mat[i]][i];
+	return ans;
+}
+
+int main(){
+	;
+}
