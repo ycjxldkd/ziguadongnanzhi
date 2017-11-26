@@ -1,0 +1,62 @@
+# include <queue>
+# include <cstdio>
+# include <vector>
+# include <cstring>
+# include <iostream>
+# include <algorithm>
+using namespace std;
+
+const int V=202,INF=0x3f3f3f3f;
+struct edge{int to,cap,cost,next;}G[V];
+int etot,head[V],dis[V],inq[V],prevv[V],preve[V];
+
+void init(){
+	etot=0;
+	memset(head,-1,sizeof(head));
+}
+
+void addedge(int u,int v,int c,int cost){
+	G[etot].to=v,G[etot].cap=c,G[etot].cost=cost,G[etot].next=head[u],head[u]=etot++;
+	G[etot].to=u,G[etot].cap=0,G[etot].cost=-cost,G[etot].next=head[v],head[v]=etot++;
+}
+
+void costflow(int s,int t,int &cost,int &flow){
+	cost=flow=0;
+	while(true){
+		for(int i=0;i<=V;i++) dis[i]=INF;
+		queue<int> Q;
+		Q.push(s);
+		inq[s]=1;dis[s]=0;
+		while(Q.size()){
+			int x=Q.front();
+			inq[x]=0;Q.pop();
+			for(int i=head[x];i;i=G[i].next){
+				edge e=G[i];
+				if(e.cap>0&&dis[e.to]>dis[x]+e.cost){
+					dis[e.to]=dis[x]+e.cost;
+					prevv[e.to]=x;preve[e.to]=i;
+					if(!inq[e.to]){
+						Q.push(e.to);
+						inq[e.to]=1;
+					}
+				}
+			}
+		}
+		if(dis[t]==INF) break;
+		int d=INF;
+		for(int v=t;v!=s;v=prevv[v]){
+			d=min(d,G[preve[v]].cap);
+		}
+		flow+=d;
+		cost+=d*dis[t];
+		for(int v=t;v!=s;v=prevv[t]){
+			edge &e=G[preve[v]];
+			e.cap-=d;
+			G[preve[v]^1].cap+=d;
+		}
+	}
+}
+
+int main(){
+	;
+}
