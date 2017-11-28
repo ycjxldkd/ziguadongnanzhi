@@ -1,0 +1,39 @@
+# include <cstdio>
+# include <cstring>
+# include <algorithm>
+# include <vector>
+# include <cmath>
+# include <iostream>
+using namespace std;
+
+# define exp 1e-5
+const int inf=0x3f3f3f3f,nn=20000+5;
+typedef vector<int> vec;
+typedef vector<vec> mat;
+
+//n 行數，m列數
+void gauss(mat a,vec b,vec &d){
+    int n=a.size(),m=a[0].size();
+    mat c(n,vec(m+1));
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++) c[i][j]=a[i][j];
+        c[i][m]=b[i];
+    }
+    for(int i=0;i<m;i++){
+        int p=i;
+        for(int j=i;j<n;j++)
+            if(fabs(c[j][i])>fabs(c[p][i])) p=j;
+        swap(c[i],c[p]);
+        for(int j=i+1;j<m+1;j++) c[i][j]/=c[i][i];
+        for(int j=0;j<n;j++){
+            if(j!=i){
+                for(int k=i+1;k<m+1;k++) c[j][k]-=c[j][i]*c[i][k];
+            }
+        }
+    }
+    for(int i=0;i<m;i++) d[i]=c[i][m];
+}
+
+int main(){
+    ;
+}
