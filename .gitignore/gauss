@@ -34,6 +34,23 @@ void gauss(mat a,vec b,vec &d){
     for(int i=0;i<m;i++) d[i]=c[i][m];
 }
 
+int gauss(int n,int m){
+	int i=0,j=0,k,u,r;
+	while(i<n&&j<m){
+		r=i;
+		while(a[r][j]==0&&r<n) r++;
+		if(a[r][j]){
+			swap(a[i],a[r]);
+			for(u=i+1;u<n;u++) 
+				if(a[u][j])
+				for(k=i;k<m;k++) a[u][k]^=a[i][k];
+			i++;
+		}
+		j++;
+	}
+	return i;
+}
+
 int main(){
     ;
 }
